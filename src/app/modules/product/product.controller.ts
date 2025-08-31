@@ -5,17 +5,30 @@ import { productServices } from "./product.service";
 
 const createProduct = catchAsync(async (req, res) => {
 
-    const result = await productServices.createProductDB(req.body);
+  const result = await productServices.createProductDB(req.files as Express.Multer.File[], req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Product created successfully!",
+    data: result,
+  });
+});
+
+const getAllProduct = catchAsync(async (req, res) => {
+    const result = await productServices.getAllProductDB();
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Product create successfully!",
+        message: "Product get successfully!",
         data: result,
     })
 })
-const getAllProduct = catchAsync(async (req, res) => {
-    const result = await productServices.getAllProductDB();
+
+const getSingleProduct = catchAsync(async (req, res) => {
+    const { productId } = req.params;
+    const result = await productServices.getSingleProductDB(productId);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -28,4 +41,5 @@ const getAllProduct = catchAsync(async (req, res) => {
 export const productController = {
     createProduct,
     getAllProduct,
+    getSingleProduct,
 }

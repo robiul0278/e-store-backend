@@ -1,28 +1,39 @@
-import { v2 as cloudinary } from "cloudinary";
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import config from "../config";
 import multer from "multer";
+import fs from "fs";
 
-export const sendImageToCloudinary = async () => {
-    cloudinary.config({
-        cloud_name: config.cloud_name,
-        api_key: config.cloud_api_key,
-        api_secret: config.cloud_api_secret,
-    });
+cloudinary.config({
+    cloud_name: config.cloud_name,
+    api_key: config.cloud_api_key,
+    api_secret: config.cloud_api_secret,
+});
 
-    try {
-        const result = await cloudinary.uploader.upload(
-            "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+export const sendImageToCloudinary = (path: string, fileName: string): Promise<UploadApiResponse> => {
+
+    return new Promise((resolve, reject) => {
+        // remove spaces
+        const nameWithoutSpaces = fileName.split('.')[0].replace(/\s+/g, '-');
+
+        // add 3 random chars for uniqueness
+        const randomSuffix = Math.random().toString(36).substring(2, 5);
+        const uniqueFileName = `${nameWithoutSpaces}-${randomSuffix}`;
+        cloudinary.uploader.upload(
+            path,
             {
-                folder: "my_profile",
-                use_filename: true,
-                unique_filename: true,
-                overwrite: false,
+                public_id: uniqueFileName,
+                folder: 'my_profile',
+            }, function (error, result) {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result as UploadApiResponse);
+                // remove file from local uploads folder
+                fs.unlinkSync(path);
             }
         );
-        console.log("Upload success:", result.secure_url);
-    } catch (error) {
-        console.error("Upload failed:", error);
-    }
+
+    })
 };
 
 

@@ -1,5 +1,5 @@
 import AppError from "../../errors/AppError";
-import { ILoginUser, IRegisterUser, IResetPassword } from "./auth.interface";
+import { TLoginUser, TRegisterUser, TResetPassword } from "./auth.interface";
 import { userModel } from "./auth.model";
 import httpStatus from "http-status";
 import bcrypt from "bcrypt";
@@ -8,14 +8,17 @@ import config from "../../../config";
 import { sendEmail } from "../../../utils/sendEmail";
 import { sendImageToCloudinary } from "../../../utils/sendImageToCloudinary";
 
-const registerDB = async (payload: IRegisterUser) => {
+const registerDB = async (file: any, payload: TRegisterUser) => {
+
     // send image to cloudinary
-    sendImageToCloudinary();
+    const {secure_url} = await sendImageToCloudinary(file?.path, payload?.name);
+
+    payload.photo = secure_url;
     const result = await userModel.create(payload);
     return result;
 }
 
-const loginDB = async (payload: ILoginUser) => {
+const loginDB = async (payload: TLoginUser) => {
     const isUserExists = await userModel.findOne({ email: payload?.email });
 
     if (!isUserExists) {
@@ -112,7 +115,7 @@ const forgetPassword = async (email: string) => {
 
 }
 
-const resetPassword = async (payload: IResetPassword, token: string) => {
+const resetPassword = async (payload: TResetPassword, token: string) => {
     const { email, newPassword } = payload;
 
     const decoded = jwt.verify(token, config.jwt_secret_token as string) as JwtPayload;

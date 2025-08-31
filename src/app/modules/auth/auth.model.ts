@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
-import { IRegisterUser } from './auth.interface';
+import { TRegisterUser } from './auth.interface';
 import bcrypt from "bcrypt";
 import config from '../../../config';
 
-const UserSchema = new Schema<IRegisterUser>({
+const UserSchema = new Schema<TRegisterUser>({
     name: {
         type: String,
         required: true,
@@ -22,7 +22,7 @@ const UserSchema = new Schema<IRegisterUser>({
     },
     photo: {
         type: String,
-        required: true,
+        required: false ,
     },
     role: {
         type: String,
@@ -45,4 +45,4 @@ UserSchema.post('save', function (doc, next) {
     next();
 });
 
-export const userModel = model<IRegisterUser>("User", UserSchema);
+export const userModel = model<TRegisterUser>("User", UserSchema);

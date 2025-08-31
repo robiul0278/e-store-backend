@@ -1,6 +1,6 @@
 import { USER_ROLE } from "./auth.constant";
 
-export type IRegisterUser = {
+export type TRegisterUser = {
     name: string;
     email: string;
     password: string;
@@ -8,12 +8,12 @@ export type IRegisterUser = {
     role?: "user" | "admin";
 }
 
-export type ILoginUser = {
+export type TLoginUser = {
     email: string;
     password: string;
 }
 
-export type IResetPassword = {
+export type TResetPassword = {
        email: string;
     newPassword: string;
 }
