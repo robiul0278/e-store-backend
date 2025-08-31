@@ -5,9 +5,12 @@ import httpStatus from "http-status";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../../config";
-import { sendEmail } from "../../../shared/sendEmail";
+import { sendEmail } from "../../../utils/sendEmail";
+import { sendImageToCloudinary } from "../../../utils/sendImageToCloudinary";
 
 const registerDB = async (payload: IRegisterUser) => {
+    // send image to cloudinary
+    sendImageToCloudinary();
     const result = await userModel.create(payload);
     return result;
 }
