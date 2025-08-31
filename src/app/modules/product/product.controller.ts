@@ -5,7 +5,6 @@ import { productServices } from "./product.service";
 
 const createProduct = catchAsync(async (req, res) => {
 
-    console.log(req.body);
     const result = await productServices.createProductDB(req.body);
 
     sendResponse(res, {

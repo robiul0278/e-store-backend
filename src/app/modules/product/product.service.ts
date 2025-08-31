@@ -1,12 +1,12 @@
-import { ProductModal } from "./product.model";
+import { ProductModel } from "./product.model";
 
 const createProductDB = async (payload: any) => {
-    const result = await ProductModal.create(payload);
+    const result = await ProductModel.create(payload);
     return result;
 }
 
 const getAllProductDB = async () => {
-    const result = await ProductModal.find({});
+    const result = await ProductModel.find({});
     return result;
 }
 
