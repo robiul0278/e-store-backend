@@ -3,6 +3,7 @@ import cors from 'cors';
 import { globalErrorHandler } from './app/middleware/globalErrorHandler';
 import router from './app/routes';
 import cookieParser  from "cookie-parser";
+import { createSuperAdmin } from './utils/init-super-admin';
 
 
 // parsers
@@ -12,6 +13,8 @@ app.use(cookieParser())
 app.use(cors());
 
 app.use('/api/v1', router);
+// Initialize Super Admin
+createSuperAdmin().catch(console.error);
 
 app.get('/', (req: Request, res: Response) => {
   res.send(`OK! Mongoose is running at ${new Date().toLocaleTimeString()}!`);

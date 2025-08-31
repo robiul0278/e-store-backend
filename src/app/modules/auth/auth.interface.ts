@@ -5,7 +5,7 @@ export type TRegisterUser = {
     email: string;
     password: string;
     photo: string;
-    role?: "user" | "admin";
+    role?: "user" | "admin" | "superAdmin";
 }
 
 export type TLoginUser = {

@@ -19,13 +19,15 @@ const registerDB = async (file: any, payload: TRegisterUser) => {
 }
 
 const loginDB = async (payload: TLoginUser) => {
-    const isUserExists = await userModel.findOne({ email: payload?.email });
+    const User = await userModel.findOne({ email: payload?.email });
 
-    if (!isUserExists) {
+    if (!User) {
         throw new AppError(httpStatus.NOT_FOUND, "This user is not found!");
     }
     // checking is the password correct  
-    const isPasswordMatched = await bcrypt.compare(payload?.password, isUserExists?.password);
+    const isPasswordMatched = await bcrypt.compare(payload?.password, User?.password);
+
+    console.log(isPasswordMatched);
 
     if (!isPasswordMatched) {
         throw new AppError(httpStatus.NOT_FOUND, "This password not matched!");
@@ -33,9 +35,9 @@ const loginDB = async (payload: TLoginUser) => {
 
     // create accessToken 
     const jwtPayload = {
-        userId: isUserExists?._id,
-        email: isUserExists?.email,
-        role: isUserExists?.role,
+        userId: User?._id,
+        email: User?.email,
+        role: User?.role,
     }
 
     const accessToken = jwt.sign(

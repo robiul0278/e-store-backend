@@ -26,5 +26,11 @@ export default {
   // CLOUDINARY
   cloud_name: process.env.CLOUD_NAME,
   cloud_api_key: process.env.CLOUD_API_KEY,
-  cloud_api_secret: process.env.CLOUD_API_SECRET
+  cloud_api_secret: process.env.CLOUD_API_SECRET,
+
+  // SUPER ADMIN
+  super_admin_email: process.env.SUPER_ADMIN_EMAIL,
+  super_admin_password: process.env.SUPER_ADMIN_PASSWORD as string,
+  super_admin_role: process.env.SUPER_ADMIN_ROLE,
+  super_admin_name: process.env.SUPER_ADMIN_NAME,
 };

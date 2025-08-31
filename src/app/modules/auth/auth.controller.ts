@@ -13,7 +13,7 @@ const registerUser = catchAsync(async (req, res) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "User register Successfully!",
+        message: "Register Successfully!",
         data: other,
     })
 })
@@ -29,7 +29,7 @@ const loginUser = catchAsync(async (req, res) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "User login Successfully!",
+        message: "Login Successfully!",
         data: token,
     })
 })
