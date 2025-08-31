@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import { userModel } from "../app/modules/auth/auth.model";
 import config from "../config";
 
@@ -12,8 +11,8 @@ export const createSuperAdmin = async () => {
       role: "superAdmin",
     });
 
-    console.log("Super Admin created successfully");
+    console.log("✅ Super Admin created successfully");
   } else {
-    console.log("Super Admin already exist. Skipping Super Admin creation.");
+    console.log("🟧 Super Admin already exist. Skipping Super Admin creation.");
   }
 };
