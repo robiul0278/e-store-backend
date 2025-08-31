@@ -2,6 +2,11 @@ import { sendImageToCloudinary } from "../../../utils/sendImageToCloudinary";
 import { TProduct } from "./product.interface";
 import { ProductModel } from "./product.model";
 
+const getAllProductDB = async () => {
+    const result = await ProductModel.find({});
+    return result;
+}
+
 const createProductDB = async (files: Express.Multer.File[], payload: TProduct) => {
   const photoUrls: string[] = [];
 
@@ -15,16 +20,11 @@ const createProductDB = async (files: Express.Multer.File[], payload: TProduct) 
   return product;
 };
 
-const getAllProductDB = async () => {
-    const result = await ProductModel.find({});
-    return result;
-}
 
 const getSingleProductDB = async (productId: string) => {
     const result = await ProductModel.findById(productId);
     return result;
 }
-
 
 export const productServices = {
     createProductDB,

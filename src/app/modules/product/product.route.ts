@@ -8,6 +8,10 @@ import { upload } from "../../../utils/sendImageToCloudinary";
 
 const router = express.Router();
 
+router.get('/', 
+    productController.getAllProduct
+);
+
 router.post(
     '/create', 
      authGard(USER_ROLE.admin),
@@ -18,10 +22,6 @@ router.post(
     }, 
     validateRequest(productValidationSchema), 
      productController.createProduct
-);
-
-router.get('/', 
-    productController.getAllProduct
 );
 
 router.get('/:productId', 

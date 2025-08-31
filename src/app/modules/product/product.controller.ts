@@ -33,7 +33,7 @@ const getSingleProduct = catchAsync(async (req, res) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Product get successfully!",
+        message: "Get Single successfully!",
         data: result,
     })
 })
