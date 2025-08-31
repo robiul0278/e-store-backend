@@ -5,6 +5,10 @@ import catchAsync from "../../../shared/catchAsync";
 import config from "../../../config";
 
 const registerUser = catchAsync(async (req, res) => {
+
+    console.log(req.file);
+    console.log(req.body);
+
     const result = await authServices.registerDB(req.body);
     const { password, ...other } = result.toObject()
 

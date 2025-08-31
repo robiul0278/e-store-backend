@@ -1,12 +1,18 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { authController } from "./auth.controller";
 import validateRequest from "../../middleware/validateRequest";
 import { forgotPasswordValidationSchema, refreshTokenValidationSchema, resetPasswordValidationSchema, userRegisterValidationSchema,userLoginValidationSchema } from "./auth.validation";
+import { upload } from "../../../utils/sendImageToCloudinary";
 
 const router = express.Router();
 
 router.post(
     '/register', 
+    upload.single('file'),
+    (req:Request, res: Response, next: NextFunction ) => {
+        req.body = JSON.parse(req.body.data);
+        next();
+    }, 
     validateRequest(userRegisterValidationSchema), 
     authController.registerUser
 );

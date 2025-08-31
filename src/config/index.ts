@@ -21,5 +21,10 @@ export default {
   jwt_refresh_expiration: process.env.JWT_REFRESH_EXPIRATION,
 
   // RESET PASSWORD 
-  reset_password_ui_link: process.env.RESET_PASSWORD_UI_LINK 
+  reset_password_ui_link: process.env.RESET_PASSWORD_UI_LINK ,
+
+  // CLOUDINARY
+  cloud_name: process.env.CLOUD_NAME,
+  cloud_api_key: process.env.CLOUD_API_KEY,
+  cloud_api_secret: process.env.CLOUD_API_SECRET
 };
