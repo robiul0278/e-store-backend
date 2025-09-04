@@ -12,7 +12,7 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
     {
       path: duplicatedField || '', // fallback: ''
       message: duplicatedValue
-        ? `এই ${duplicatedField} ইতোমধ্যে ব্যবহৃত হয়েছে!`
+        ? `this ${duplicatedField} already use!`
         : "এই তথ্য ইতোমধ্যে ব্যবহৃত হয়েছে",
     },
   ];

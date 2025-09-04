@@ -5,7 +5,6 @@ import catchAsync from "../../../shared/catchAsync";
 import config from "../../../config";
 
 const registerUser = catchAsync(async (req, res) => {
-
     const result = await authServices.registerDB(req.file, req.body);
     const { password, ...other } = result.toObject()
 
@@ -18,8 +17,7 @@ const registerUser = catchAsync(async (req, res) => {
     })
 })
 const loginUser = catchAsync(async (req, res) => {
-    const result = await authServices.loginDB(req.body);
-    const {refreshToken, ...token} = result;
+    const {refreshToken, ...data} = await authServices.loginDB(req.body);
 
     res.cookie("refreshToken", refreshToken,{
         secure: config.node_env === "production",
@@ -30,7 +28,7 @@ const loginUser = catchAsync(async (req, res) => {
         statusCode: httpStatus.OK,
         success: true,
         message: "Login Successfully!",
-        data: token,
+        data: data,
     })
 })
 
@@ -52,7 +50,7 @@ const forgetPassword = catchAsync(async (req, res) => {
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Reset link generated successfully!",
+        message: "Please check your email!",
         data: result,
     })
 })

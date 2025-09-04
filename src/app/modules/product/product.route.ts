@@ -8,24 +8,36 @@ import { upload } from "../../../utils/sendImageToCloudinary";
 
 const router = express.Router();
 
-router.get('/', 
+router.get('/',
     productController.getAllProduct
 );
 
 router.post(
-    '/create', 
-     authGard(USER_ROLE.admin),
-     upload.array('photos', 10),
-    (req:Request, res: Response, next: NextFunction ) => {
+    '/create',
+    //  authGard(USER_ROLE.admin),
+    upload.array('photos'),
+    (req: Request, res: Response, next: NextFunction) => {
         req.body = JSON.parse(req.body.data);
         next();
-    }, 
-    validateRequest(productValidationSchema), 
-     productController.createProduct
+    },
+    validateRequest(productValidationSchema),
+    productController.createProduct
 );
 
-router.get('/:productId', 
+router.patch('/update',
+    //  authGard(USER_ROLE.admin),
+    upload.array('photos'),
+    (req: Request, res: Response, next: NextFunction) => {
+        req.body = JSON.parse(req.body.data);
+        next();
+    },
+    productController.updateProduct
+);
+router.get('/single/:slug',
     productController.getSingleProduct
+);
+router.delete('/delete/:id',
+    productController.deleteProduct
 );
 
 export const productRoutes = router;

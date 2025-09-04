@@ -31,6 +31,8 @@ export default {
   // SUPER ADMIN
   super_admin_email: process.env.SUPER_ADMIN_EMAIL,
   super_admin_password: process.env.SUPER_ADMIN_PASSWORD as string,
-  super_admin_role: process.env.SUPER_ADMIN_ROLE,
-  super_admin_name: process.env.SUPER_ADMIN_NAME,
+
+  // NodeMailer
+  smtp_user: process.env.SMTP_USER,
+  smtp_pass: process.env.SMTP_PASS
 };

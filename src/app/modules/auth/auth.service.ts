@@ -9,7 +9,6 @@ import { sendEmail } from "../../../utils/sendEmail";
 import { sendImageToCloudinary } from "../../../utils/sendImageToCloudinary";
 
 const registerDB = async (file: any, payload: TRegisterUser) => {
-
     // send image to cloudinary
     const {secure_url} = await sendImageToCloudinary(file?.path, payload?.name);
 
@@ -27,11 +26,11 @@ const loginDB = async (payload: TLoginUser) => {
     // checking is the password correct  
     const isPasswordMatched = await bcrypt.compare(payload?.password, User?.password);
 
-    console.log(isPasswordMatched);
-
     if (!isPasswordMatched) {
-        throw new AppError(httpStatus.NOT_FOUND, "This password not matched!");
+        throw new AppError(httpStatus.NOT_FOUND, "This password not matched!", 'password');
     }
+
+      const { password, __v, ...userWithoutSensitive } = User.toObject();
 
     // create accessToken 
     const jwtPayload = {
@@ -54,6 +53,7 @@ const loginDB = async (payload: TLoginUser) => {
     return {
         accessToken,
         refreshToken,
+        user: userWithoutSensitive,
     }
 }
 
@@ -96,7 +96,7 @@ const forgetPassword = async (email: string) => {
     const isUserExists = await userModel.findOne({ email });
 
     if (!isUserExists) {
-        throw new AppError(httpStatus.NOT_FOUND, "This email is not found!");
+        throw new AppError(httpStatus.NOT_FOUND, "এই ইমেইলটি সঠিক নয়!", "email");
     }
 
     // create accessToken 
@@ -111,40 +111,43 @@ const forgetPassword = async (email: string) => {
         { expiresIn: '10m' }
     );
 
-    const resetUILink = `${config.reset_password_ui_link}/api/v1/auth/reset-password?email=${isUserExists.email}&token=${resetToken}`
-
+    const resetUILink = `${config.reset_password_ui_link}/reset-password?email=${isUserExists.email}&token=${resetToken}`
     sendEmail(isUserExists?.email, resetUILink)
-
 }
 
 const resetPassword = async (payload: TResetPassword, token: string) => {
     const { email, newPassword } = payload;
 
-    const decoded = jwt.verify(token, config.jwt_secret_token as string) as JwtPayload;
+    // JWT verify
+    try {
+        const decoded = jwt.verify(token, config.jwt_secret_token as string) as JwtPayload;
 
-    if (!decoded) {
-        throw new AppError(httpStatus.UNAUTHORIZED, "Invalid or expired token.");
+        const user = await userModel.findById(decoded.userId);
+
+        if (!user || user.email !== email) {
+            throw new AppError(httpStatus.NOT_FOUND, "User not found with this email!", "email");
+        }
+
+        const hashedPassword = await bcrypt.hash(
+            newPassword,
+            Number(config.bcrypt_salt_rounds)
+        );
+
+        await userModel.findByIdAndUpdate(decoded.userId, {
+            password: hashedPassword,
+        });
+
+    } catch (error: any) {
+        if (error.name === "TokenExpiredError") {
+            throw new AppError(httpStatus.UNAUTHORIZED, "Token has expired. Please request a new one.", "token");
+        } else if (error.name === "JsonWebTokenError") {
+            throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token provided.", "token");
+        } else {
+            throw new AppError(httpStatus.UNAUTHORIZED, "Token verification failed.", "token");
+        }
     }
-
-    const user = await userModel.findById(decoded.userId);
-
-    if (!user || user.email !== email) {
-        throw new AppError(httpStatus.NOT_FOUND, "User not found with this email!");
-    }
-
-    const hashedPassword = await bcrypt.hash(
-        newPassword,
-        Number(config.bcrypt_salt_rounds)
-    );
-
-    await userModel.findByIdAndUpdate(
-        decoded.userId,
-        { password: hashedPassword },
-        // { new: true } // return updated user
-    );
 
 };
-
 
 
 export const authServices = {

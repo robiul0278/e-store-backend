@@ -4,7 +4,6 @@ import catchAsync from "../../../shared/catchAsync";
 import { productServices } from "./product.service";
 
 const createProduct = catchAsync(async (req, res) => {
-
   const result = await productServices.createProductDB(req.files as Express.Multer.File[], req.body);
 
   sendResponse(res, {
@@ -16,7 +15,7 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getAllProduct = catchAsync(async (req, res) => {
-    const result = await productServices.getAllProductDB();
+    const result = await productServices.getAllProductDB(req.query);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -27,8 +26,8 @@ const getAllProduct = catchAsync(async (req, res) => {
 })
 
 const getSingleProduct = catchAsync(async (req, res) => {
-    const { productId } = req.params;
-    const result = await productServices.getSingleProductDB(productId);
+    const { slug } = req.params;
+    const result = await productServices.singleProductDB(slug);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -37,9 +36,35 @@ const getSingleProduct = catchAsync(async (req, res) => {
         data: result,
     })
 })
+const deleteProduct = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await productServices.deleteProductDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Product delete successfully!",
+        data: result,
+    })
+})
+
+const updateProduct = catchAsync(async (req, res) => {
+    const { _id } = req.body;
+
+    const result = await productServices.updateProductDB(_id, req.files as Express.Multer.File[], req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Product updated successfully!",
+        data: result,
+    })
+})
 
 export const productController = {
     createProduct,
     getAllProduct,
     getSingleProduct,
+    deleteProduct,
+    updateProduct,
 }

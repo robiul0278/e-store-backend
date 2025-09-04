@@ -1,42 +1,43 @@
 import express, { NextFunction, Request, Response } from "express";
 import { authController } from "./auth.controller";
 import validateRequest from "../../middleware/validateRequest";
-import { forgotPasswordValidationSchema, refreshTokenValidationSchema, resetPasswordValidationSchema, userRegisterValidationSchema,userLoginValidationSchema } from "./auth.validation";
+import { forgotPasswordValidationSchema, refreshTokenValidationSchema, resetPasswordValidationSchema, userRegisterValidationSchema, userLoginValidationSchema } from "./auth.validation";
 import { upload } from "../../../utils/sendImageToCloudinary";
 
 const router = express.Router();
 
 router.post(
-    '/register', 
+    '/register',
     upload.single('file'),
-    (req:Request, res: Response, next: NextFunction ) => {
+    (req: Request, res: Response, next: NextFunction) => {
         req.body = JSON.parse(req.body.data);
+        req.body.photo = req.file?.filename;
         next();
-    }, 
-    validateRequest(userRegisterValidationSchema), 
+    },
+    validateRequest(userRegisterValidationSchema),
     authController.registerUser
 );
 
 router.post(
-    '/login', 
-     validateRequest(userLoginValidationSchema), 
+    '/login',
+    validateRequest(userLoginValidationSchema),
     authController.loginUser
 );
 
 router.post(
-    '/refresh-token', 
+    '/refresh-token',
     validateRequest(refreshTokenValidationSchema),
     authController.refreshToken
 );
 
 router.post(
-    '/forget-password', 
+    '/forget-password',
     validateRequest(forgotPasswordValidationSchema),
     authController.forgetPassword
 );
 
 router.post(
-    '/reset-password', 
+    '/reset-password',
     validateRequest(resetPasswordValidationSchema),
     authController.resetPassword
 );
