@@ -7,12 +7,15 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../../config";
 import { sendEmail } from "../../../utils/sendEmail";
 import { sendImageToCloudinary } from "../../../utils/sendImageToCloudinary";
+import QueryBuilder from "../../../helper/QueryBuilder";
 
-const registerDB = async (file: any, payload: TRegisterUser) => {
+const registerDB = async (file: Express.Multer.File | null, payload: TRegisterUser) => {
     // send image to cloudinary
-    const {secure_url} = await sendImageToCloudinary(file?.path, payload?.name);
+    if (file) {
+        const { secure_url } = await sendImageToCloudinary(file?.path, payload?.name);
+        payload.photo = secure_url;
+    }
 
-    payload.photo = secure_url;
     const result = await userModel.create(payload);
     return result;
 }
@@ -30,7 +33,7 @@ const loginDB = async (payload: TLoginUser) => {
         throw new AppError(httpStatus.NOT_FOUND, "This password not matched!", 'password');
     }
 
-      const { password, __v, ...userWithoutSensitive } = User.toObject();
+    const { password, __v, ...userWithoutSensitive } = User.toObject();
 
     // create accessToken 
     const jwtPayload = {
@@ -150,10 +153,46 @@ const resetPassword = async (payload: TResetPassword, token: string) => {
 };
 
 
+const getAllUsersDB = async (query: Record<string, unknown>) => {
+  const searchableField = ['name', 'email']
+  const Select = '-password -__v'
+
+  const jobQuery = new QueryBuilder(
+    userModel.find(), query)
+    .search(searchableField)
+    .filter()
+    .sort()
+    .paginate()
+    .fields(Select);
+
+  const result = await jobQuery.modelQuery;
+  const meta = await jobQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  }
+}
+
+const deleteUserDB = async (id: string) => {
+  const result = await userModel.deleteOne({_id: id});
+  return result;
+}
+const updateUserRoleDB = async (userId: string, role: string) => {
+    const result = await userModel.updateOne(
+      {_id: userId},
+      { $set: {role} },
+    );
+    return result;
+}
+
 export const authServices = {
     registerDB,
     loginDB,
     refreshToken,
     forgetPassword,
-    resetPassword
+    resetPassword,
+    getAllUsersDB,
+    deleteUserDB,
+    updateUserRoleDB,
 }

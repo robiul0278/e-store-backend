@@ -5,7 +5,6 @@ export const userRegisterValidationSchema = z.object({
     name: z.string().min(1, { message: "name is required!" }),
     email: z.string().email({ message: "invalid email address!" }).min(1, { message: "email is required!" }),
     password: z.string().min(6, { message: "password must be 6 characters!" }),
-    photo: z.string().min(1, { message: "photo is required!" }),
   }),
 });
 

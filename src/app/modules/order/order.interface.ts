@@ -10,6 +10,7 @@ export type TOrderProduct = {
 export type TOrder = {
   user: Types.ObjectId;
   products: TOrderProduct[];
+  quantity: number,
   totalAmount: number;
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
   paymentMethod?: string;

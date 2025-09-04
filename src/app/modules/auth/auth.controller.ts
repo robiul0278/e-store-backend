@@ -5,7 +5,7 @@ import catchAsync from "../../../shared/catchAsync";
 import config from "../../../config";
 
 const registerUser = catchAsync(async (req, res) => {
-    const result = await authServices.registerDB(req.file, req.body);
+    const result = await authServices.registerDB(req.file as Express.Multer.File, req.body);
     const { password, ...other } = result.toObject()
 
     // send response 
@@ -67,6 +67,39 @@ const resetPassword = catchAsync(async (req, res) => {
         data: result,
     })
 })
+const getAllUsers = catchAsync(async (req, res) => {
+    const result = await authServices.getAllUsersDB(req.query);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Get all users successfully!",
+        data: result,
+    })
+})
+const deleteUsers = catchAsync(async (req, res) => {
+     const { id } = req.params;
+    const result = await authServices.deleteUserDB(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Delete users successfully!",
+        data: result,
+    })
+})
+const updateUserRole = catchAsync(async (req, res) => {
+     const { userId } = req.params;
+     const {role} = req.body
+    const result = await authServices.updateUserRoleDB(userId,role);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User role update successful!",
+        data: result,
+    })
+})
 
 
 export const authController = {
@@ -75,4 +108,7 @@ export const authController = {
     refreshToken,
     forgetPassword,
     resetPassword,
+    getAllUsers,
+    deleteUsers,
+    updateUserRole,
 }

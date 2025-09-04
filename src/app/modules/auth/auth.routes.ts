@@ -11,7 +11,6 @@ router.post(
     upload.single('file'),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = JSON.parse(req.body.data);
-        req.body.photo = req.file?.filename;
         next();
     },
     validateRequest(userRegisterValidationSchema),
@@ -40,6 +39,18 @@ router.post(
     '/reset-password',
     validateRequest(resetPasswordValidationSchema),
     authController.resetPassword
+);
+router.get(
+    '/',
+    authController.getAllUsers
+);
+router.delete(
+    '/delete/:id',
+    authController.deleteUsers
+);
+router.patch(
+    '/update/:userId',
+    authController.updateUserRole
 );
 
 export const authRoutes = router;
