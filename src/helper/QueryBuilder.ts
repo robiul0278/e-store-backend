@@ -22,7 +22,7 @@ class QueryBuilder<T> {
 
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'startDate', 'endDate'];
     excludeFields.forEach(el => delete queryObj[el]);
     ['categories'].forEach(field => {
       if (!queryObj[field]) delete queryObj[field];
@@ -32,11 +32,40 @@ class QueryBuilder<T> {
     return this;
   }
 
+dateFilter(dateField: string = "createdAt") {
+  const { startDate, endDate } = this.query as {
+    startDate?: string;
+    endDate?: string;
+  };
+
+  if (startDate || endDate) {
+    const dateCondition: Record<string, any> = {};
+    if (startDate) dateCondition.$gte = new Date(startDate);
+
+    if (endDate) {
+      // দিন শেষে পর্যন্ত ধরার জন্য
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      dateCondition.$lte = end;
+    }
+
+    this.modelQuery = this.modelQuery.find({
+      [dateField]: dateCondition,
+    });
+  }
+
+  return this;
+}
+
+
   sort() {
     const sortStr = (this.query?.sort as string)?.split(',').join(' ') || '-createdAt';
     this.modelQuery = this.modelQuery.sort(sortStr);
     return this;
   }
+
+
+
 
   paginate() {
     const page = Number(this.query?.page) || 1;

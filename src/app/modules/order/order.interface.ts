@@ -3,18 +3,24 @@ import { Types } from "mongoose";
 export type TOrderProduct = {
   product: Types.ObjectId;
   quantity: number;
-  price: number; // price at the time of order
-  discount?: number;
+  price: number;
 };
 
 export type TOrder = {
   user: Types.ObjectId;
   products: TOrderProduct[];
-  quantity: number,
   totalAmount: number;
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  shippingAddress: string;
+  phone: string;
   paymentMethod?: string;
-  paymentStatus?: "pending" | "paid" | "failed";
+  paymentStatus?: "pending" | "paid" | 'failed';
+  orderId: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export type TStatus = { 
+  status?: string; 
+  paymentStatus?: string 
+}
