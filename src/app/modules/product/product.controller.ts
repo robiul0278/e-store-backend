@@ -61,10 +61,34 @@ const updateProduct = catchAsync(async (req, res) => {
     })
 })
 
+const updateProductStatus = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await productServices.updateProductStatusDB(id, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Product updated successfully!",
+        data: result,
+    })
+})
+const dashboardAnalytics = catchAsync(async (req, res) => {
+    const result = await productServices.AnalyticsDB();
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Product updated successfully!",
+        data: result,
+    })
+})
+
 export const productController = {
     createProduct,
     getAllProduct,
     getSingleProduct,
     deleteProduct,
     updateProduct,
+    updateProductStatus,
+    dashboardAnalytics
 }

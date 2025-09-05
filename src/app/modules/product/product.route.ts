@@ -11,6 +11,9 @@ const router = express.Router();
 router.get('/',
     productController.getAllProduct
 );
+router.get('/analytics',
+    productController.dashboardAnalytics
+);
 
 router.post(
     '/create',
@@ -38,6 +41,9 @@ router.get('/single/:slug',
 );
 router.delete('/delete/:id',
     productController.deleteProduct
+);
+router.patch('/update-status/:id',
+    productController.updateProductStatus
 );
 
 export const productRoutes = router;

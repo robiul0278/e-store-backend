@@ -14,3 +14,9 @@ export type TProduct = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+
+export type TProductStatus ={
+inStock?: boolean,
+status?: string;
+}

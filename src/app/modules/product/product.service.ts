@@ -1,7 +1,10 @@
+import { Types } from "mongoose";
 import QueryBuilder from "../../../helper/QueryBuilder";
 import { sendImageToCloudinary } from "../../../utils/sendImageToCloudinary";
-import { TProduct } from "./product.interface";
+import { TProduct, TProductStatus } from "./product.interface";
 import { ProductModel } from "./product.model";
+import { userModel } from "../auth/auth.model";
+import { OrderModel } from "../order/order.model";
 
 const getAllProductDB = async (query: Record<string, unknown>) => {
   const searchableField = ['name']
@@ -71,7 +74,6 @@ const updateProductDB = async (_id: string,files: Express.Multer.File[],payload:
   // update object
   const updateData: Partial<TProduct> = { ...payload };
 
-
   if (photoUrls.length > 0) {
     updateData.photos = photoUrls;
   } else {
@@ -87,6 +89,32 @@ const updateProductDB = async (_id: string,files: Express.Multer.File[],payload:
   return result;
 };
 
+const updateProductStatusDB = async (id: string, data: TProductStatus) => {
+  const updateData = {
+    ...(data.inStock !== undefined && { inStock: data.inStock }),
+    ...(data.status !== undefined && { status: data.status }),
+  };
+
+  const result = await ProductModel.updateOne(
+      { _id: id },
+    { $set: updateData },
+    { runValidators: true }
+  );
+
+  return result;
+};
+
+const AnalyticsDB = async () => {
+    const userCount = await userModel.countDocuments();
+    const productCount = await ProductModel.countDocuments();
+    const orderCount = await OrderModel.countDocuments();
+
+    return {
+      userCount,
+      productCount,
+      orderCount
+    }
+}
 
 
 export const productServices = {
@@ -95,4 +123,6 @@ export const productServices = {
     singleProductDB,
     deleteProductDB,
     updateProductDB,
+    updateProductStatusDB,
+    AnalyticsDB,
 }
